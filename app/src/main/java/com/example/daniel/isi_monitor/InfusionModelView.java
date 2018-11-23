@@ -13,8 +13,8 @@ public class InfusionModelView {
     // Contains logic
     InfusionModel model;
 
-    InfusionModelView(String name, String location, String deviceId, String accessToken) {
-        this.model = new InfusionModel(name, location, deviceId, accessToken);
+    InfusionModelView(InfusionModel model) {
+        this.model = model;
     }
 
     void Update() {

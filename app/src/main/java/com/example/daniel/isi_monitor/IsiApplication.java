@@ -23,7 +23,7 @@ public class IsiApplication extends Application {
             return false;
         }
 
-        InfusionModelView modelView = new InfusionModelView(name, location, deviceId, accessToken);
+        InfusionModelView modelView = new InfusionModelView(new InfusionModel(name, location, deviceId, accessToken));
 
         modelViews.put(name, modelView);
         return true;
