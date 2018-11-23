@@ -112,9 +112,11 @@ public class MainActivity extends AppCompatActivity {
                 IsiApplication app = (IsiApplication)getApplication();
                 app.UpdateInfusions();
 
+                //Update ListView
+
                 handler.postDelayed(runnable, updateInterval);
             }
-        }, updateInterval);
+        }, 1);
 
         super.onResume();
     }
