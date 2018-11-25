@@ -15,6 +15,8 @@ import okhttp3.Response;
  *
  * void SendNotification(String message, int id)
  *  -   Damit kannst du eine Push Nachricht generieren.
+ *
+ * Alle weiteren Funktionalitäten laufen über die lokalen Variablen.
  */
 
 public class InfusionModelView implements Comparable<InfusionModelView> {
