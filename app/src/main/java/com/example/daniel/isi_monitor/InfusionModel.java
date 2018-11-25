@@ -8,7 +8,7 @@ public class InfusionModel {
     private String deviceId;
     private String accessToken;
 
-    InfusionModel(String name, String location, String deviceId, String accessToken) {
+    InfusionModel(String name, String location, String restNodeUrl) {
         this.name = name;
         this.location = location;
         this.deviceId = deviceId;
@@ -24,9 +24,11 @@ public class InfusionModel {
 
     public String GetLocation() { return location; }
 
-    public String GetDeviceId() { return  deviceId; }
-
-    public String GetAccessToken() { return accessToken; }
+    public String GetRestRoute(String prop) {
+        return "https://api.particle.io/v1/devices/" + deviceId
+                + "/" + prop
+                + "?access_token=" + accessToken;
+    }
 
     public boolean IsOnline() { return online; }
 

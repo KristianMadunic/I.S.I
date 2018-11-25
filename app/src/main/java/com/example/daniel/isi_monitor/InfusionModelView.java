@@ -13,36 +13,66 @@ import okhttp3.Response;
  * Hi Kristian. Ich habe folgende Schnittstellen für dich die du über die Membervariable
  * app ansprechen kannst:
  *
- * void AddInfusionData(String deviceId, int priority, double weight, String name, String location, String title, String description)
- *  -   Damit kannst du in der Auflistung einen neuen Eintrag erstellen. priority bestimmt die Position (hoch oben, niedrig unten)
- *
- * void RemoveInfusionData(String deviceId)
- *  -   Damit kannst du einen Eintrag aus der Auflistung entfernen.
- *
- * void UpdateInfusionData(String deviceId, int priority, double weight)
- *  -   Damit kannst du einen Eintrag in der Liste modifizieren.
- *
  * void SendNotification(String message)
  *  -   Damit kannst du eine Push Nachricht generieren.
  */
 
-public class InfusionModelView {
-    // Contains logic
+public class InfusionModelView implements Comparable<InfusionModelView> {
+    // Referenced model
     InfusionModel model;
 
+    // Application which is using the view
     IsiApplication app;
+
+    // Title of the List entry
+    String title;
+
+    // Short description for List entry
+    String description;
+
+    // Background color of list entry as hex string
+    String color;
+
+    // For ordering the list
+    int priority;
 
     InfusionModelView(InfusionModel model, IsiApplication app) {
         this.model = model;
         this.app = app;
+
+        // TODO sinnvolle Werte
+        this.title = "";
+        this.description = "";
+        this.color = "#FFFFFF";
     }
 
-    /**
-     * Die Remove() Methode wird aufgerufen wenn der User auf den Mülleimer klickt.
-     */
-    public void Remove() {
-        // Listeneintrag wird aus Frontend raus geworfen wenn Daten aus dem Backend entfernt werden
-        app.RemoveInfusionData(model.GetDeviceId());
+    public void SetTitle(String title) {
+        this.title = title;
+    }
+
+    public void SetDescription(String description) {
+        this.description = description;
+    }
+
+    public void SetColor(String color) {
+        this.color = color;
+    }
+
+    public void SetPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public String GetTitle() { return title; }
+
+    public String GetDescription() { return description; }
+
+    public String GetColor() { return color; }
+
+    public int GetPriority() { return priority; }
+
+    @Override
+    public int compareTo(InfusionModelView modelView) {
+        return priority - modelView.priority;
     }
 
     /**
@@ -57,9 +87,7 @@ public class InfusionModelView {
         //
         OkHttpClient client = new OkHttpClient();
 
-        String url = "https://api.particle.io/v1/devices/"
-                + model.GetDeviceId() + "/weight?access_token="
-                + model.GetAccessToken();
+        String url = model.GetRestRoute("weight");
 
         Request request = new Request.Builder()
                 .url(url)

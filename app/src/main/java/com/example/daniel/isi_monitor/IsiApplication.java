@@ -26,13 +26,13 @@ public class IsiApplication extends Application {
         InfusionModelView modelView = new InfusionModelView(new InfusionModel(name, location, deviceId, accessToken), this);
 
         modelViews.put(deviceId, modelView);
+
         return true;
     }
 
     public void DeleteInfusion(String deviceId) {
         InfusionModelView modelView = modelViews.get(deviceId);
         if(null != modelView) {
-            modelView.Remove();
             modelViews.remove(deviceId);
         }
     }
@@ -46,18 +46,6 @@ public class IsiApplication extends Application {
                 modelView.Update();
             }
         }
-    }
-
-    public void AddInfusionData(String deviceId, int priority, double weight, String name, String location, String title, String description) {
-        // TODO
-    }
-
-    public void RemoveInfusionData(String deviceId) {
-        // TODO
-    }
-
-    public void UpdateInfusionData(String deviceId, int priority, double weight) {
-        // TODO
     }
 
     public void SendNotification(String message) {

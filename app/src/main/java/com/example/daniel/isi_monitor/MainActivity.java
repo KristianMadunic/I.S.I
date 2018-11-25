@@ -15,8 +15,10 @@ import android.widget.SimpleAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Observer {
 
     // Array of strings for ListView Title
     String[] listviewTitle = new String[]{
@@ -123,7 +125,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        handler.removeCallbacks(runnable); //stop handler when activity not visible
+        //stop handler when activity not visible
+        handler.removeCallbacks(runnable);
         super.onPause();
+    }
+
+    public void update(Observable o, Object arg) {
+
     }
 }
