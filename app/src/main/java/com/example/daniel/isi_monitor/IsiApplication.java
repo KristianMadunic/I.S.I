@@ -1,14 +1,10 @@
 package com.example.daniel.isi_monitor;
 
 import android.app.Application;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import android.support.v4.app.NotificationCompat;
 
 public class IsiApplication extends Application {
     InfusionModelViewContainer modelViewContainer;
@@ -34,8 +30,16 @@ public class IsiApplication extends Application {
         }, 1);
     }
 
-    public void SendNotification(String message) {
-        // TODO
+    public void SendNotification(String message, int id) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.infusion_icon)
+                        .setContentTitle(getResources().getString(R.string.app_name))
+                        .setContentText(message);
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(id, mBuilder.build());
     }
 
     public InfusionModelViewContainer GetModelViewContainer() {

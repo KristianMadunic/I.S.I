@@ -13,7 +13,7 @@ import okhttp3.Response;
  * Hi Kristian. Ich habe folgende Schnittstellen für dich die du über die Membervariable
  * app ansprechen kannst:
  *
- * void SendNotification(String message)
+ * void SendNotification(String message, int id)
  *  -   Damit kannst du eine Push Nachricht generieren.
  */
 
@@ -142,7 +142,7 @@ public class InfusionModelView implements Comparable<InfusionModelView> {
         /////////////////////////////////////////////////////////////////////////////
         // Dein Code beginnt hier:
         //
-
+        app.SendNotification("Hallo Welt!", GetId());
 
 
     }
