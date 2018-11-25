@@ -11,44 +11,34 @@ import java.util.Map;
 import java.util.Set;
 
 public class IsiApplication extends Application {
-    private final Map<String, InfusionModelView> modelViews = Collections.synchronizedMap(new HashMap<String, InfusionModelView>());
+    InfusionModelViewContainer modelViewContainer;
+
+    Handler handler = new Handler();
+
+    final int updateInterval = 10000;
+
+    Runnable runnable;
 
     @Override
     public void onCreate() {
         super.onCreate();
-    }
+        modelViewContainer = new InfusionModelViewContainer(this);
 
-    public boolean AddInfusion(String name, String location, String deviceId, String accessToken) {
-        if(modelViews.containsKey(deviceId)) {
-            return false;
-        }
+        handler.postDelayed(runnable = new Runnable() {
+            public void run() {
+                //do something
+                modelViewContainer.UpdateInfusions();
 
-        InfusionModelView modelView = new InfusionModelView(new InfusionModel(name, location, deviceId, accessToken), this);
-
-        modelViews.put(deviceId, modelView);
-
-        return true;
-    }
-
-    public void DeleteInfusion(String deviceId) {
-        InfusionModelView modelView = modelViews.get(deviceId);
-        if(null != modelView) {
-            modelViews.remove(deviceId);
-        }
-    }
-
-    public void UpdateInfusions() {
-        Log.d("IsiApplication", "UpdateInfusions");
-        // Synchronizing on map, not on set
-        synchronized (modelViews) {
-            // Iterator must be in synchronized block
-            for(InfusionModelView modelView : modelViews.values()) {
-                modelView.Update();
+                handler.postDelayed(runnable, updateInterval);
             }
-        }
+        }, 1);
     }
 
     public void SendNotification(String message) {
         // TODO
+    }
+
+    public InfusionModelViewContainer GetModelViewContainer() {
+        return modelViewContainer;
     }
 }

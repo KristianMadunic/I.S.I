@@ -41,8 +41,8 @@ public class InfusionModelView implements Comparable<InfusionModelView> {
         this.app = app;
 
         // TODO sinnvolle Werte
-        this.title = "";
-        this.description = "";
+        this.title = "Generic Title";
+        this.description = "Generic Description";
         this.color = "#FFFFFF";
     }
 

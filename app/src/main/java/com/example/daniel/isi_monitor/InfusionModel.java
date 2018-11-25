@@ -8,7 +8,7 @@ public class InfusionModel {
     private String deviceId;
     private String accessToken;
 
-    InfusionModel(String name, String location, String restNodeUrl) {
+    InfusionModel(String name, String location, String deviceId, String accessToken) {
         this.name = name;
         this.location = location;
         this.deviceId = deviceId;

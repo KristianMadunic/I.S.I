@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,11 +38,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
             "Android ListView Short Description", "Android ListView Short Description", "Android ListView Short Description", "Android ListView Short Description",
     };
 
-    Handler handler = new Handler();
-
-    final int updateInterval = 10000;
-
-    Runnable runnable;
+    IsiApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,20 +47,22 @@ public class MainActivity extends AppCompatActivity implements Observer {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        app = (IsiApplication)getApplication();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 // Remove this later
-                IsiApplication app = (IsiApplication)getApplication();
-                app.AddInfusion("Patient 0", "Raum 401", "3e0022000c47353136383631", "1e43056f563df6c892b932875ca1e3c03efaca75");
+                app.GetModelViewContainer().AddInfusion("Patient 0", "Raum 401", "3e0022000c47353136383631", "1e43056f563df6c892b932875ca1e3c03efaca75");
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
-
+        /***************************************************************
+         * Example:
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
         for (int i = 0; i < 8; i++) {
@@ -80,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
         SimpleAdapter simpleAdapter = new SimpleAdapter(getBaseContext(), aList, R.layout.listview_activity, from, to);
         ListView androidListView = (ListView) findViewById(R.id.list_view);
         androidListView.setAdapter(simpleAdapter);
+         ****************************************************************/
     }
 
     @Override
@@ -106,31 +106,37 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     protected void onResume() {
-        //start handler as activity become visible
-
-        handler.postDelayed( runnable = new Runnable() {
-            public void run() {
-                //do something
-                IsiApplication app = (IsiApplication)getApplication();
-                app.UpdateInfusions();
-
-                //Update ListView
-
-                handler.postDelayed(runnable, updateInterval);
-            }
-        }, 1);
-
+        app.GetModelViewContainer().addObserver(this);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        //stop handler when activity not visible
-        handler.removeCallbacks(runnable);
+        app.GetModelViewContainer().deleteObserver(this);
         super.onPause();
     }
 
     public void update(Observable o, Object arg) {
+        ArrayList<InfusionModelView> list = app.GetModelViewContainer().GetModelViews();
+        List<String> colors = new ArrayList<String>();
+        List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+
+        for(InfusionModelView modelView: list) {
+            HashMap<String, String> hm = new HashMap<String, String>();
+            hm.put("listview_title", modelView.GetTitle());
+            hm.put("listview_discription", modelView.GetDescription());
+            hm.put("listview_image", Integer.toString(R.drawable.infusion_icon));
+            aList.add(hm);
+
+            colors.add(modelView.GetColor());
+        }
+
+        String[] from = {"listview_image", "listview_title", "listview_discription"};
+        int[] to = {R.id.listview_image, R.id.listview_item_title, R.id.listview_item_short_description};
+
+        SpecialAdapter simpleAdapter = new SpecialAdapter(getBaseContext(), aList, R.layout.listview_activity, from, to, colors);
+        ListView androidListView = (ListView) findViewById(R.id.list_view);
+        androidListView.setAdapter(simpleAdapter);
 
     }
 }
