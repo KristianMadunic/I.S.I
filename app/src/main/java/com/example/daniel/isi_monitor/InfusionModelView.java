@@ -36,9 +36,17 @@ public class InfusionModelView implements Comparable<InfusionModelView> {
     // For ordering the list
     int priority;
 
+    // To keep track of id's
+    static int counter = 0;
+
+    // To identify the model view
+    final int id;
+
     InfusionModelView(InfusionModel model, IsiApplication app) {
         this.model = model;
         this.app = app;
+
+        this.id = counter++;
 
         // TODO sinnvolle Werte
         this.title = "Generic Title";
@@ -69,6 +77,8 @@ public class InfusionModelView implements Comparable<InfusionModelView> {
     public String GetColor() { return color; }
 
     public int GetPriority() { return priority; }
+
+    public int GetId() { return  id; }
 
     @Override
     public int compareTo(InfusionModelView modelView) {

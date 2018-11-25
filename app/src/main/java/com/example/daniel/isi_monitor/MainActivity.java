@@ -1,5 +1,6 @@
 package com.example.daniel.isi_monitor;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -81,10 +84,12 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     public void update(Observable o, Object arg) {
         ArrayList<InfusionModelView> list = app.GetModelViewContainer().GetModelViews();
-        List<String> colors = new ArrayList<String>();
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-        for(InfusionModelView modelView: list) {
+        final List<String> colors = new ArrayList<String>();
+        final List<View.OnClickListener> delClickListeners = new ArrayList<View.OnClickListener>();
+
+        for(final InfusionModelView modelView: list) {
             HashMap<String, String> hm = new HashMap<String, String>();
             hm.put("listview_title", modelView.GetTitle());
             hm.put("listview_discription", modelView.GetDescription());
@@ -92,14 +97,35 @@ public class MainActivity extends AppCompatActivity implements Observer {
             aList.add(hm);
 
             colors.add(modelView.GetColor());
+            delClickListeners.add(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    app.GetModelViewContainer().DeleteInfusion(modelView.GetId());
+                }
+            });
         }
 
         String[] from = {"listview_image", "listview_title", "listview_discription"};
         int[] to = {R.id.listview_image, R.id.listview_item_title, R.id.listview_item_short_description};
 
-        SpecialAdapter simpleAdapter = new SpecialAdapter(getBaseContext(), aList, R.layout.listview_activity, from, to, colors);
-        ListView androidListView = (ListView) findViewById(R.id.list_view);
-        androidListView.setAdapter(simpleAdapter);
+        ListAdapter specialAdapter = new SimpleAdapter(getBaseContext(), aList, R.layout.listview_activity, from, to) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View itemView=super.getView(position, convertView, parent);
+                View delBtn=itemView.findViewById(R.id.btn_del);
 
+                delBtn.setOnClickListener(delClickListeners.get(position));
+
+                int colorPos = position % colors.size();
+                int c = Color.parseColor(colors.get(colorPos));
+
+                itemView.setBackgroundColor(c);
+
+                return itemView;
+            }
+        };
+
+        ListView androidListView = (ListView) findViewById(R.id.list_view);
+        androidListView.setAdapter(specialAdapter);
     }
 }

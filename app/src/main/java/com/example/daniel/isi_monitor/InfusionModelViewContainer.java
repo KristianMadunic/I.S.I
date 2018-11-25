@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Observable;
 
 public class InfusionModelViewContainer extends Observable {
-    private final Map<String, InfusionModelView> modelViews = Collections.synchronizedMap(new HashMap<String, InfusionModelView>());
+    private final Map<Integer, InfusionModelView> modelViews = Collections.synchronizedMap(new HashMap<Integer, InfusionModelView>());
 
     IsiApplication app;
 
@@ -24,7 +24,7 @@ public class InfusionModelViewContainer extends Observable {
 
         InfusionModelView modelView = new InfusionModelView(new InfusionModel(name, location, deviceId, accessToken), app);
 
-        modelViews.put(deviceId, modelView);
+        modelViews.put(modelView.GetId(), modelView);
 
         setChanged();
 
@@ -33,10 +33,10 @@ public class InfusionModelViewContainer extends Observable {
         return true;
     }
 
-    public void DeleteInfusion(String deviceId) {
-        InfusionModelView modelView = modelViews.get(deviceId);
+    public void DeleteInfusion(int id) {
+        InfusionModelView modelView = modelViews.get(id);
         if(null != modelView) {
-            modelViews.remove(deviceId);
+            modelViews.remove(id);
         }
 
         setChanged();
