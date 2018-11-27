@@ -19,7 +19,7 @@ import okhttp3.Response;
  * Alle weiteren Funktionalitäten laufen über die lokalen Variablen.
  */
 
-public class InfusionModelView implements Comparable<InfusionModelView> {
+public class InfusionViewModel implements Comparable<InfusionViewModel> {
     // Referenced model
     InfusionModel model;
 
@@ -44,7 +44,7 @@ public class InfusionModelView implements Comparable<InfusionModelView> {
     // To identify the model view
     final int id;
 
-    InfusionModelView(InfusionModel model, IsiApplication app) {
+    InfusionViewModel(InfusionModel model, IsiApplication app) {
         this.model = model;
         this.app = app;
 
@@ -83,7 +83,7 @@ public class InfusionModelView implements Comparable<InfusionModelView> {
     public int GetId() { return  id; }
 
     @Override
-    public int compareTo(InfusionModelView modelView) {
+    public int compareTo(InfusionViewModel modelView) {
         return priority - modelView.priority;
     }
 

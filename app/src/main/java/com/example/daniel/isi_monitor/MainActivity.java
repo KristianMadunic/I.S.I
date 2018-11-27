@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
             public void onClick(View view) {
 
                 // Remove this later
-                app.GetModelViewContainer().AddInfusion("Patient 0", "Raum 401", "3e0022000c47353136383631", "1e43056f563df6c892b932875ca1e3c03efaca75");
+                app.GetViewModelContainer().AddInfusion("Patient 0", "Raum 401", "3e0022000c47353136383631", "1e43056f563df6c892b932875ca1e3c03efaca75");
 
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -72,35 +72,35 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     protected void onResume() {
-        app.GetModelViewContainer().addObserver(this);
+        app.GetViewModelContainer().addObserver(this);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        app.GetModelViewContainer().deleteObserver(this);
+        app.GetViewModelContainer().deleteObserver(this);
         super.onPause();
     }
 
     public void update(Observable o, Object arg) {
-        ArrayList<InfusionModelView> list = app.GetModelViewContainer().GetModelViews();
+        ArrayList<InfusionViewModel> list = app.GetViewModelContainer().GetViewModels();
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
         final List<String> colors = new ArrayList<String>();
         final List<View.OnClickListener> delClickListeners = new ArrayList<View.OnClickListener>();
 
-        for(final InfusionModelView modelView: list) {
+        for(final InfusionViewModel ViewModel: list) {
             HashMap<String, String> hm = new HashMap<String, String>();
-            hm.put("listview_title", modelView.GetTitle());
-            hm.put("listview_discription", modelView.GetDescription());
+            hm.put("listview_title", ViewModel.GetTitle());
+            hm.put("listview_discription", ViewModel.GetDescription());
             hm.put("listview_image", Integer.toString(R.drawable.infusion_icon));
             aList.add(hm);
 
-            colors.add(modelView.GetColor());
+            colors.add(ViewModel.GetColor());
             delClickListeners.add(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    app.GetModelViewContainer().DeleteInfusion(modelView.GetId());
+                    app.GetViewModelContainer().DeleteInfusion(ViewModel.GetId());
                 }
             });
         }

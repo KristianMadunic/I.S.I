@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 
 public class IsiApplication extends Application {
-    InfusionModelViewContainer modelViewContainer;
+    InfusionViewModelContainer ViewModelContainer;
 
     Handler handler = new Handler();
 
@@ -18,12 +18,12 @@ public class IsiApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        modelViewContainer = new InfusionModelViewContainer(this);
+        ViewModelContainer = new InfusionViewModelContainer(this);
 
         handler.postDelayed(runnable = new Runnable() {
             public void run() {
                 //do something
-                modelViewContainer.UpdateInfusions();
+                ViewModelContainer.UpdateInfusions();
 
                 handler.postDelayed(runnable, updateInterval);
             }
@@ -42,7 +42,7 @@ public class IsiApplication extends Application {
         mNotificationManager.notify(id, mBuilder.build());
     }
 
-    public InfusionModelViewContainer GetModelViewContainer() {
-        return modelViewContainer;
+    public InfusionViewModelContainer GetViewModelContainer() {
+        return ViewModelContainer;
     }
 }
