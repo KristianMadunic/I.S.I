@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public class DeviceValueFactory {
 
-    public double FromJsonString(String jsonString) {
+    public double DoubleFromJsonString(String jsonString) {
         try {
             JSONObject mainObject = new JSONObject(jsonString);
             return mainObject.getDouble("result");
@@ -12,6 +12,16 @@ public class DeviceValueFactory {
 
         }
         return 0.0;
+    }
+
+    public int IntegerFromJsonString(String jsonString) {
+        try {
+            JSONObject mainObject = new JSONObject(jsonString);
+            return mainObject.getInt("result");
+        } catch(Exception e) {
+
+        }
+        return 0;
     }
 
 }

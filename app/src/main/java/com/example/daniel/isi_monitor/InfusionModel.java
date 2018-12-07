@@ -3,6 +3,7 @@ package com.example.daniel.isi_monitor;
 public class InfusionModel {
     private boolean online;
     private double weight;
+    private int counter;
     private String name;
     private String location;
     private String deviceId;
@@ -15,8 +16,10 @@ public class InfusionModel {
         this.accessToken = accessToken;
 
         weight = 0.0;
-        online = false;
+        counter = 0;
     }
+
+    public int GetCounter() { return counter; }
 
     public double GetWeight() { return weight; }
 
@@ -39,5 +42,7 @@ public class InfusionModel {
     public void SetWeight(double weight) {
         this.weight = weight;
     }
+
+    public void SetCounter(int counter) { this.counter = counter; }
 
 }

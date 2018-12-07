@@ -87,6 +87,18 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
         return priority - modelView.priority;
     }
 
+    public void GetResponse(String prop, Callback cb) {
+        OkHttpClient client = new OkHttpClient();
+
+        String url = model.GetRestRoute(prop);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(cb);
+    }
+
     /**
      * Die Update() Methode wird zyklisch aufgerufen.
      * Ich habe schonmal den Code für das Aktuallisieren des Gewichts geschrieben weil man dafür
@@ -97,34 +109,15 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
         /////////////////////////////////////////////////////////////////////////////
         // Auslesen des Gewichts via Http Request:
         //
-        OkHttpClient client = new OkHttpClient();
-
-        String url = model.GetRestRoute("weight");
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
+        GetResponse("avgWeight", new Callback() {
             public void onFailure(Call call, IOException e) {
                 // Do something when request failed
-                e.printStackTrace();
-                Log.d("InfusionModelView", "Request Failed.");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(!response.isSuccessful()){
-                    Log.d("InfusionModelView","Request not Succesful");
-
-                    // Mark model as not online
-                    model.setOnline(false);
-
                     return;
-                } else {
-                    // Mark model as online
-                    model.setOnline(true);
                 }
 
                 // Read data in the worker thread
@@ -132,12 +125,36 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
 
                 DeviceValueFactory factory = new DeviceValueFactory();
 
-                double weight = factory.FromJsonString(data);
-
-                Log.d("InfusionModelView","Set weight: " + weight);
+                double weight = factory.DoubleFromJsonString(data);
 
                 // Update weight attribute of model
                 model.SetWeight(weight);
+            }
+        });
+
+        /////////////////////////////////////////////////////////////////////////////
+        // Auslesen der "Leer Zeit" via Http Request:
+        //
+        GetResponse("counter", new Callback() {
+            public void onFailure(Call call, IOException e) {
+                // Do something when request failed
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(!response.isSuccessful()){
+                    return;
+                }
+
+                // Read data in the worker thread
+                final String data = response.body().string();
+
+                DeviceValueFactory factory = new DeviceValueFactory();
+
+                int counter = factory.IntegerFromJsonString(data);
+
+                // Update weight attribute of model
+                model.SetCounter(counter);
             }
         });
 
