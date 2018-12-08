@@ -1,10 +1,12 @@
 package com.example.daniel.isi_monitor;
 
+import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,14 +43,35 @@ public class MainActivity extends AppCompatActivity implements Observer {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                new com.google.zxing.integration.android.IntentIntegrator(MainActivity.this)
+                        .initiateScan();
 
                 // Remove this later
-                app.GetViewModelContainer().AddInfusion("Patient 0", "Raum 401", "3e0022000c47353136383631", "1e43056f563df6c892b932875ca1e3c03efaca75");
+                //app.GetViewModelContainer().AddInfusion("Patient 0", "Raum 401", "3e0022000c47353136383631", "1e43056f563df6c892b932875ca1e3c03efaca75");
 
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                // Scan was canceled
+            } else {
+                String contents = result.getContents();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Scan Result:");
+                builder.setMessage(contents);
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
