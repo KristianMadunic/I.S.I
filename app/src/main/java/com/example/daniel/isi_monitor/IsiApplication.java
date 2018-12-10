@@ -11,7 +11,7 @@ public class IsiApplication extends Application {
 
     Handler handler = new Handler();
 
-    final int updateInterval = 10000;
+    final int updateInterval = 1000;
 
     Runnable runnable;
 

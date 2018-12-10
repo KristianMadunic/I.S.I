@@ -28,6 +28,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer {
+    public static final String QR_MESSAGE = "com.example.daniel.isi_monitor.QR";
+
     IsiApplication app;
 
     @Override
@@ -58,15 +60,11 @@ public class MainActivity extends AppCompatActivity implements Observer {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
-            if(result.getContents() == null) {
-                // Scan was canceled
-            } else {
+            if(result.getContents() != null) {
                 String contents = result.getContents();
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Scan Result:");
-                builder.setMessage(contents);
-                AlertDialog alert = builder.create();
-                alert.show();
+                Intent intent = new Intent(this, AddActivity.class);
+                intent.putExtra(QR_MESSAGE, contents);
+                startActivity(intent);
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment

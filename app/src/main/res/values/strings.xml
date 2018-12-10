@@ -2,4 +2,7 @@
     <string name="app_name">ISI-Monitor</string>
     <string name="action_settings">Einstellungen</string>
     <string name="add_monitor">Monitor hinzufügen</string>
+    <string name="name_field">Name</string>
+    <string name="location_field">Ort</string>
+    <string name="save_monitor">Speichern</string>
 </resources>
