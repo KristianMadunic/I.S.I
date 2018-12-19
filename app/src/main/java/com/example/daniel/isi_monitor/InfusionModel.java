@@ -1,7 +1,6 @@
 package com.example.daniel.isi_monitor;
 
 public class InfusionModel {
-    private boolean online;
     private double weight;
     private int counter;
     private String name;
@@ -31,12 +30,6 @@ public class InfusionModel {
         return "https://api.particle.io/v1/devices/" + deviceId
                 + "/" + prop
                 + "?access_token=" + accessToken;
-    }
-
-    public boolean IsOnline() { return online; }
-
-    public void setOnline(boolean online) {
-        this.online = online;
     }
 
     public void SetWeight(double weight) {

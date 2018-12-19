@@ -20,6 +20,8 @@ import okhttp3.Response;
  */
 
 public class InfusionViewModel implements Comparable<InfusionViewModel> {
+    final boolean debug = false;
+
     // Referenced model
     InfusionModel model;
 
@@ -50,9 +52,9 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
 
         this.id = counter++;
 
-        // TODO sinnvolle Werte
-        this.title = "Generic Title";
-        this.description = "Generic Description";
+        // Initialize
+        this.title = model.GetName();
+        this.description = "Init...";
         this.color = "#FFFFFF";
     }
 
@@ -106,63 +108,118 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
      * Du kannst den Code einfach unten weiterschreiben.
      */
     public void Update() {
-        /////////////////////////////////////////////////////////////////////////////
-        // Auslesen des Gewichts via Http Request:
-        //
-        GetResponse("avgWeight", new Callback() {
-            public void onFailure(Call call, IOException e) {
-                // Do something when request failed
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(!response.isSuccessful()){
-                    return;
+        if(!debug) {
+            /////////////////////////////////////////////////////////////////////////////
+            // Auslesen des Gewichts via Http Request:
+            //
+            GetResponse("avgWeight", new Callback() {
+                public void onFailure(Call call, IOException e) {
+                    // Do something when request failed
                 }
 
-                // Read data in the worker thread
-                final String data = response.body().string();
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        return;
+                    }
 
-                DeviceValueFactory factory = new DeviceValueFactory();
+                    // Read data in the worker thread
+                    final String data = response.body().string();
 
-                double weight = factory.DoubleFromJsonString(data);
+                    DeviceValueFactory factory = new DeviceValueFactory();
 
-                // Update weight attribute of model
-                model.SetWeight(weight);
-            }
-        });
+                    double weight = factory.DoubleFromJsonString(data);
 
-        /////////////////////////////////////////////////////////////////////////////
-        // Auslesen der "Leer Zeit" via Http Request:
-        //
-        GetResponse("counter", new Callback() {
-            public void onFailure(Call call, IOException e) {
-                // Do something when request failed
-            }
+                    // Update weight attribute of model
+                    model.SetWeight(weight);
+                }
+            });
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(!response.isSuccessful()){
-                    return;
+            /////////////////////////////////////////////////////////////////////////////
+            // Auslesen der "Leer Zeit" via Http Request:
+            //
+            GetResponse("counter", new Callback() {
+                public void onFailure(Call call, IOException e) {
+                    // Do something when request failed
                 }
 
-                // Read data in the worker thread
-                final String data = response.body().string();
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        return;
+                    }
 
-                DeviceValueFactory factory = new DeviceValueFactory();
+                    // Read data in the worker thread
+                    final String data = response.body().string();
 
-                int counter = factory.IntegerFromJsonString(data);
+                    DeviceValueFactory factory = new DeviceValueFactory();
 
-                // Update weight attribute of model
-                model.SetCounter(counter);
-            }
-        });
+                    int counter = factory.IntegerFromJsonString(data);
+
+                    // Update weight attribute of model
+                    model.SetCounter(counter);
+                }
+            });
+        } else {
+            // Debug mode
+            int newCounter = model.GetCounter() + 600;
+            if(newCounter > 200*60) newCounter = 0;
+            model.SetWeight(1);
+            model.SetCounter(newCounter);
+        }
 
         /////////////////////////////////////////////////////////////////////////////
         // Dein Code beginnt hier:
         //
         app.SendNotification("Hallo Welt!", GetId());
 
+        // Create description message
+        String description = model.GetLocation() + " / Status: ";
+        if(model.GetCounter() < 10*60) {
+            description += "Nicht leer";
+        } else {
+            int minutes = model.GetCounter() / 60;
+            description += "Seit " + minutes + " Minuten leer";
+        }
+        this.SetDescription(description);
+
+        // Calculate color.
+        // Starts with green, transforms to red over yellow.
+        int red = 0, green = 0, blue = 0;
+        int maxTime = 120*60; // Full red after 2h
+        int time = model.GetCounter();
+        if(time > maxTime) {
+            time = maxTime;
+        }
+        float f = (float)time / maxTime; // convert to [0 ... 1]
+        float a = (1.f - f)*2.f;
+        float x = (float)Math.floor(a);
+        float y = (float)Math.floor(255.f*(a-x));
+        int group = (int)x; // Group: 0->red 1->yellow 2->green
+        switch(group)
+        {
+            case 0:
+                red=255;
+                green=(int)y;
+                blue=0;
+                break;
+            case 1:
+                red=255-(int)y;
+                green=255;
+                blue=0;
+                break;
+            case 2:
+                red=0;
+                green=255;
+                blue=(int)y;
+                break;
+        }
+        this.SetColor("#" + String.format("%02x", red) + String.format("%02x", green) + String.format("%02x", blue));
+
+        // Throw notification if empty for too long
+        if(model.GetCounter() > 30*60) {
+            app.SendNotification(model.GetName() + ": Infusion ist leer", this.GetId());
+        }
 
     }
 }
