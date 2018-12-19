@@ -171,7 +171,6 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
         /////////////////////////////////////////////////////////////////////////////
         // Dein Code beginnt hier:
         //
-        app.SendNotification("Hallo Welt!", GetId());
 
         // Create description message
         String description = model.GetLocation() + " / Status: ";
