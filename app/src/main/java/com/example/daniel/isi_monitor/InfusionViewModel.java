@@ -172,6 +172,9 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
         // Dein Code beginnt hier:
         //
 
+        // Determine priority
+        this.SetPriority(Integer.MAX_VALUE - model.GetCounter());
+
         // Create description message
         String description = model.GetLocation() + " / Status: ";
         if(model.GetCounter() < 10*60) {
