@@ -38,6 +38,9 @@ public class AddActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String qrContent = intent.getStringExtra(MainActivity.QR_MESSAGE);
 
+        this.deviceId = "";
+        this.accessToken = "";
+
         try {
             JSONObject mainObject = new JSONObject(qrContent);
             deviceId = mainObject.getString("deviceId");

@@ -20,7 +20,7 @@ import okhttp3.Response;
  */
 
 public class InfusionViewModel implements Comparable<InfusionViewModel> {
-    final boolean debug = false;
+    boolean debug;
 
     // Referenced model
     InfusionModel model;
@@ -56,6 +56,8 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
         this.title = model.GetName();
         this.description = "Init...";
         this.color = "#FFFFFF";
+
+        this.debug = model.GetAccessToken().equals((String)"demo");
     }
 
     public void SetTitle(String title) {
@@ -162,8 +164,8 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
             });
         } else {
             // Debug mode
-            int newCounter = model.GetCounter() + 600;
-            if(newCounter > 200*60) newCounter = 0;
+            int newCounter = model.GetCounter() + 10;
+            if(newCounter > 20*60) newCounter = 0;
             model.SetWeight(1);
             model.SetCounter(newCounter);
         }
@@ -177,18 +179,22 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
 
         // Create description message
         String description = model.GetLocation() + " / Status: ";
-        if(model.GetCounter() < 10*60) {
+        if(model.GetCounter() < 1*60) {
             description += "Nicht leer";
         } else {
             int minutes = model.GetCounter() / 60;
-            description += "Seit " + minutes + " Minuten leer";
+            if(minutes == 1) {
+                description += "Seit " + minutes + " Minute leer";
+            } else {
+                description += "Seit " + minutes + " Minuten leer";
+            }
         }
         this.SetDescription(description);
 
         // Calculate color.
         // Starts with green, transforms to red over yellow.
         int red = 0, green = 0, blue = 0;
-        int maxTime = 120*60; // Full red after 2h
+        int maxTime = 10*60; // Full red after 10 minutes
         int time = model.GetCounter();
         if(time > maxTime) {
             time = maxTime;
@@ -219,7 +225,7 @@ public class InfusionViewModel implements Comparable<InfusionViewModel> {
         this.SetColor("#" + String.format("%02x", red) + String.format("%02x", green) + String.format("%02x", blue));
 
         // Throw notification if empty for too long
-        if(model.GetCounter() > 30*60) {
+        if(model.GetCounter() > 90) {
             app.SendNotification(model.GetName() + ": Infusion ist leer", this.GetId());
         }
 

@@ -26,6 +26,10 @@ public class InfusionModel {
 
     public String GetLocation() { return location; }
 
+    public String GetAccessToken() { return  accessToken; }
+
+    public String GetDeviceId() { return deviceId; }
+
     public String GetRestRoute(String prop) {
         return "https://api.particle.io/v1/devices/" + deviceId
                 + "/" + prop
